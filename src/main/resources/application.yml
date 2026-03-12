@@ -1,4 +1,12 @@
 spring:
+  config:
+    import: "aws-parameterstore:/config/camp-health-app/"
+  cloud:
+    aws:
+      parameterstore:
+        enabled: true
+      region:
+        static: ap-northeast-2
   profiles:
     active: local
 logging:
