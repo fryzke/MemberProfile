@@ -8,3 +8,30 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+  config:
+    import: "aws-parameterstore:/camp-health-app/prod/"
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: never
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: "Member Profile Service"
+    team-name: "${team-name}"
+    message: "${APP_MESSAGE}"
+
+logging:
+  level:
+    root: INFO
