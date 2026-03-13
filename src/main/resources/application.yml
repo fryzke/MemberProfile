@@ -1,21 +1,55 @@
 spring:
-  config:
-    import: "aws-parameterstore:/config/camp-health-app/"
   cloud:
     aws:
-      parameterstore:
-        enabled: true
       region:
         static: ap-northeast-2
+      s3:
+        bucket: "my-member-profile-bucket-2026"
   profiles:
-    active: local
-logging:
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-server:
-  port: 8080
+    active: prod
+  config:
+    import:
+      - "optional:aws-parameterstore:/config/camp-health-app/"
+      - "optional:aws-parameterstore:/camp-health-app/prod/"
+  datasource:
+  # 이 두 줄이 핵심입니다!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:3306/${DB_NAME}?serverTimezone=Asia/Seoul
+    username: ${USER_NAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+
 management:
   endpoints:
     web:
       exposure:
-        include: "health"
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    OS:
+      enabled: true
+
+# 2. info 엔드포인트에 찍힐 내용 연결
+info:
+  app:
+    name: "Member Profile Service"
+    team-name: "${team-name}" # Parameter Store의 team-name 값을 가져옴
+    message: "${APP_MESSAGE}"
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+server:
+  port: 8080

@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -29,5 +32,17 @@ public class MemberController {
         log.info("멤버 조회 요청 ID: {}", id);
         MemberResponse response = memberService.findMemberById(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/profile-image")
+    public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+        String result = memberService.uploadProfileImage(id, file);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/profile-image")
+    public ResponseEntity<String> getPresignedUrl(@PathVariable Long id) {
+        String url = memberService.getPresignedProfileImageUrl(id);
+        return ResponseEntity.ok(url);
     }
 }

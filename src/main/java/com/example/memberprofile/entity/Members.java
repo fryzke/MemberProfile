@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberEntity {
+@Table(name = "members")
+public class Members {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +23,13 @@ public class MemberEntity {
     @Column(nullable = false, length = 4)
     private String mbti;
 
-    public MemberEntity(String name, Integer age, String mbti){
+    private String profileImageUrl;
+
+    public void updateProfileImage(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public Members(String name, Integer age, String mbti){
         this.name = name;
         this.age = age;
         this.mbti = mbti;
